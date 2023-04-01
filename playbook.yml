@@ -1,4 +1,5 @@
 ---
 #- import_playbook: node_exporter_playbook.yml
-#- import_playbook: pve_exporter_playbook.yml
+- import_playbook: pve_exporter_playbook.yml
 - import_playbook: vmware_exporter_playbook.yml
+- import_playbook: haproxy_playbook.yml

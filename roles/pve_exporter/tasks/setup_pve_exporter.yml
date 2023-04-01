@@ -2,14 +2,27 @@
   copy:
     src: pve.yml
     dest: "{{ default_config_path }}"
+  register: pve_conf
+- name: Check docker container is running or not
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ pve_exporter_port }}"
+    state: started
+    delay: 0
+    timeout: 3
+  ignore_errors: yes
+  register: pve_container
 - name: Stop old docker container
   command: docker stop {{ container_name }}
   ignore_errors: true
+  when: pve_conf.changed or pve_container.failed
 - name: Remove old docker container
   command: docker remove {{ container_name }}
   ignore_errors: true
+  when: pve_conf.changed or pve_container.failed
 - name: Open port {{ pve_exporter_port }} with iptables
   iptables:
+    action: "insert"
     chain: INPUT
     protocol: tcp
     destination_port: "{{ pve_exporter_port | int }}"

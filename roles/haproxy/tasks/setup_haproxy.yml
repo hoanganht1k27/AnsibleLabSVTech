@@ -1,0 +1,28 @@
+- name: Install HAProxy package
+  yum: 
+    name: haproxy
+    state: present
+
+- name: Open port {{ haproxy_pve_exporter_port }} with iptables
+  iptables:
+    action: "insert"
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ haproxy_pve_exporter_port | int }}"
+    jump: ACCEPT
+  when: '"pve_exporter" in type'
+
+- name: Open port {{ haproxy_vmware_exporter_port }} with iptables
+  iptables:
+    action: "insert"
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ haproxy_vmware_exporter_port | int }}"
+    jump: ACCEPT
+  when: '"vmware_exporter" in type'
+
+- name: Copy config file to remote host
+  template:
+    src: haproxy.j2
+    dest: "{{ default_haproxy_config_path }}"
+  register: service_conf

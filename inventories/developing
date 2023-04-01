@@ -6,3 +6,6 @@ node_exporter_1 ansible_host=10.98.12.29
 pve_exporter_1 ansible_host=10.98.12.29
 [vmware_exporter]
 vmware_exporter_1 ansible_host=10.98.12.29
+[haproxy]
+haproxy_1 ansible_host=10.98.12.29
+#haproxy_2 ansible_host=10.98.12.29

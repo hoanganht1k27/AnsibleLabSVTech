@@ -1,0 +1,16 @@
+- name: Start haproxy service
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: started
+  register: haproxy_service
+
+- name: Debug
+  debug:
+    var: haproxy_service
+
+- name: Restart haproxy if config file has been changed
+  systemd:
+    name: haproxy
+    state: restarted
+  when: 'service_conf.changed'

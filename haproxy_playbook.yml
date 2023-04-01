@@ -1,0 +1,10 @@
+- hosts: haproxy
+  name: haproxy_playbook
+  remote_user: root
+  tasks:
+    - name: Include all vars
+      include_vars:
+        dir: "roles/haproxy/vars"
+    - name: Haproxy 
+      include_role:
+        name: haproxy

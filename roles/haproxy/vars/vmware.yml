@@ -1,0 +1,4 @@
+---
+vmware_exporter_hosts:
+  - ip: 10.98.12.29
+    port: 9272

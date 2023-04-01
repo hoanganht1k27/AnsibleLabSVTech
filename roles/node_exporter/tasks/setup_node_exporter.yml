@@ -12,6 +12,7 @@
     state: present
 - name: Open port {{ node_exporter_port }} with iptables
   iptables:
+    action: "insert"
     chain: INPUT
     protocol: tcp
     destination_port: "{{ node_exporter_port | int }}"

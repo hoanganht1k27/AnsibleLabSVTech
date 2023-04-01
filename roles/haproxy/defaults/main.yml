@@ -1,0 +1,4 @@
+---
+haproxy_pve_exporter_port: 8080
+haproxy_vmware_exporter_port: 8081
+default_haproxy_config_path: /etc/haproxy/haproxy.cfg
