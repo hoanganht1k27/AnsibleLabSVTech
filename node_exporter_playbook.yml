@@ -1,0 +1,9 @@
+- hosts: node_exporter
+  remote_user: root
+  tasks:
+    - name: Install iptables package
+      yum:
+        name: iptables
+        state: present
+    - include_role:
+        name: node_exporter

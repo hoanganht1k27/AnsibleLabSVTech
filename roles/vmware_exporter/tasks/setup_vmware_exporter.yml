@@ -1,0 +1,16 @@
+- name: Copy config file
+  copy:
+    src: esx.yml
+    dest: "{{ default_config_path }}"
+- name: Stop old docker container
+  command: docker stop {{ container_name }}
+  ignore_errors: true
+- name: Remove old docker container
+  command: docker remove {{ container_name }}
+  ignore_errors: true
+- name: Open port {{ vmware_exporter_port }} with iptables
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ vmware_exporter_port | int }}"
+    jump: ACCEPT

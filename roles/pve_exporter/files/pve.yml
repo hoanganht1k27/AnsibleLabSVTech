@@ -1,0 +1,4 @@
+default:
+  user: prometheus@pve
+  password: juniper@123
+  verify_ssl: false

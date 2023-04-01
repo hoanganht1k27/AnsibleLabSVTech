@@ -1,0 +1,16 @@
+- name: Copy config file
+  copy:
+    src: pve.yml
+    dest: "{{ default_config_path }}"
+- name: Stop old docker container
+  command: docker stop {{ container_name }}
+  ignore_errors: true
+- name: Remove old docker container
+  command: docker remove {{ container_name }}
+  ignore_errors: true
+- name: Open port {{ pve_exporter_port }} with iptables
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ pve_exporter_port | int }}"
+    jump: ACCEPT

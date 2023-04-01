@@ -1,0 +1,6 @@
+- name: Open iptables
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: {{ prometheus_port }}
+    jump: ACCEPT

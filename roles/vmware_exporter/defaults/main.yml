@@ -1,0 +1,4 @@
+---
+vmware_exporter_port: 9272
+container_name: prometheus_vmware_exporter
+default_config_path: /opt/esx.yml

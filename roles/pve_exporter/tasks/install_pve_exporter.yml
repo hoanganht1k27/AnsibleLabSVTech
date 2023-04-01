@@ -1,0 +1,2 @@
+- name: Run pve exporter
+  command: "docker run --name {{ container_name }} --rm -d -p {{ pve_exporter_port }}:9221 -v {{ default_config_path }}:/etc/pve.yml prompve/prometheus-pve-exporter" 

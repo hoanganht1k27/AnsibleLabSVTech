@@ -1,0 +1,3 @@
+---
+- include: setup_pve_exporter.yml
+- include: install_pve_exporter.yml

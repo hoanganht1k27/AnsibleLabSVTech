@@ -1,0 +1,3 @@
+---
+- include: setup_vmware_exporter.yml
+- include: install_vmware_exporter.yml

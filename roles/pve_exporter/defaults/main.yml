@@ -1,0 +1,4 @@
+---
+default_config_path: /opt/pve.yml
+container_name: prometheus_pve_exporter
+pve_exporter_port: 9221

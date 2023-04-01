@@ -1,0 +1,8 @@
+[prometheus]
+prometheus1 ansible_host=10.98.12.29
+[node_exporter]
+node_exporter_1 ansible_host=10.98.12.29
+[pve_exporter]
+pve_exporter_1 ansible_host=10.98.12.29
+[vmware_exporter]
+vmware_exporter_1 ansible_host=10.98.12.29

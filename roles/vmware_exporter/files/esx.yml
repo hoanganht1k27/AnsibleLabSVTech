@@ -1,0 +1,15 @@
+default:
+    vsphere_host: 10.98.0.7
+    vsphere_user: "tuha@vsphere.local"
+    vsphere_password: "ABCD1234"
+    ignore_ssl: True
+    specs_size: 5000
+    fetch_custom_attributes: True
+    fetch_tags: True
+    fetch_alarms: True
+    collect_only:
+        vms: True
+        vmguests: True
+        datastores: True
+        hosts: True
+        snapshots: True

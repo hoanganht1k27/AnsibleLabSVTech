@@ -1,0 +1,3 @@
+---
+- include: setup_node_exporter.yml
+- include: install_node_exporter.yml
