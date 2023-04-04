@@ -1,0 +1,66 @@
+! Configuration File for keepalived
+
+global_defs {
+}
+
+{% set check_maxscale = { "check": false } %}
+{% for cluster in keepalived_clusters %}
+{% if cluster.type == 'maxscale' %}
+{% set _ = check_maxscale.update({"check": true}) %}
+{% endif %}
+{% endfor %}
+
+
+{% if check_maxscale["check"] == true %}
+vrrp_script chk_maxscale {
+script "pkill -0 maxscale"
+interval 2
+weight {{ health_check_weight | default(10) }}
+}
+{% endif %}
+
+
+{% set check_haproxy = { "check": false } %}
+{% for cluster in keepalived_clusters %}
+{% if cluster.type == "haproxy" %}
+{% set _ = check_haproxy.update({"check": true}) %}
+{% endif %}
+{% endfor %}
+
+{% if check_haproxy["check"] == true %}
+vrrp_script chk_haproxy {
+script "pkill -0 haproxy"
+interval 2
+weight {{ health_check_weight | default(10) }}
+}
+{% endif %}
+
+{% for cluster in keepalived_clusters %}
+{% for member in cluster.members %}
+{% if member.ip == ansible_host %}
+vrrp_instance {{ cluster.vrrp_instance }} {
+    state {{ member.state | default('BACKUP') }}
+    interface {{ member.interface | default('eth0') }}
+    virtual_router_id {{ cluster.router_id }}
+    priority {{ member.priority }}
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass {{ cluster.auth_pass }}
+    }
+    virtual_ipaddress {
+        {{ cluster.vip }}
+    }
+    track_script
+    {
+        {% if check_maxscale["check"] == true %}
+chk_maxscale
+        {% endif %}
+        {% if check_haproxy["check"] == true %}
+chk_haproxy
+        {% endif %}
+    }
+}
+{% endif %}
+{% endfor %}
+{% endfor %}

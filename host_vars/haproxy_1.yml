@@ -1,2 +1,2 @@
 ---
-type: pve_exporter,vmware_exporter
+type: pve_exporter,vmware_exporter,prometheus

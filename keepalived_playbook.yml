@@ -1,0 +1,12 @@
+- hosts: keepalived
+  name: keepalived_playbook
+  remote_user: root
+  tasks:
+    - name: Keepalived 
+      include_role:
+        name: keepalived
+  handlers:
+    - name: Restart keepalived
+      systemd:
+        name: keepalived
+        state: restarted

@@ -1,0 +1,27 @@
+- name: Install keepalived
+  yum:
+    name: keepalived
+    state: present
+
+- name: Install netcat
+  yum:
+    name: nc
+    state: present
+
+- name: Copy config file to remote host
+  template:
+    src: keepalived.j2
+    dest: "{{ default_keepalived_config_path }}"
+  notify: Restart keepalived
+
+- name: Open iptables
+  iptables:
+    action: "insert"
+    chain: INPUT
+    protocol: vrrp
+    jump: ACCEPT
+
+- name: Start keepalived service
+  systemd:
+    name: keepalived
+    state: started

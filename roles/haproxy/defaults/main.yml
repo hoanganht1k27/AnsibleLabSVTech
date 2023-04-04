@@ -1,4 +1,6 @@
 ---
 haproxy_pve_exporter_port: 8080
 haproxy_vmware_exporter_port: 8081
+haproxy_prometheus_port: 8082
+haproxy_grafana_port: 8083
 default_haproxy_config_path: /etc/haproxy/haproxy.cfg

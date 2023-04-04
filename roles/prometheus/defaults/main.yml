@@ -1,0 +1,9 @@
+---
+container_name: prometheus_container
+default_config_path: /opt/prometheus.yml
+prometheus_port: 9090
+pve_exporter_host: 127.0.0.1
+pve_exporter_port: 9221
+vmware_exporter_host: 127.0.0.1
+vmware_exporter_port: 9272
+

@@ -1,0 +1,32 @@
+---
+keepalived_clusters:
+  - health_check_weight: 10
+    vip: 10.98.12.203/14
+    type: haproxy
+    router_id: 123
+    vrrp_instance: VI_1
+    auth_pass: juniper@123
+    members:
+      - ip: 10.98.12.29
+        priority: 100
+        state: MASTER
+        interface: eth0
+#      - ip: 10.98.12.30
+#        priority: 99
+#        state: BACKUP
+#        interface: eth0
+#  - health_check_weight: 10
+#    vip: 10.98.12.201/14
+#    type: haproxy
+#    router_id: 456
+#    vrrp_instance: VI_2
+#    auth_pass: juniper@123
+#    members:
+#      - ip: 10.98.12.29
+#        priority: 100
+#        state: MASTER
+#        interface: eth0
+#      - ip: 10.98.12.30
+#        priority: 99
+#        state: BACKUP
+#        interface: eth0

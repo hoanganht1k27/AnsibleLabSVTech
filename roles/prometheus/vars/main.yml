@@ -1,0 +1,13 @@
+---
+pve_exporter_host: 10.98.12.203
+pve_exporter_port: 8080
+proxmox_hosts:
+  - 10.98.0.1
+  - 10.98.0.11
+node_exporter_hosts:
+  - ip: 10.98.12.29
+    port: 9100
+vmware_hosts:
+  - ip: 10.98.12.203
+    port: 8081
+  

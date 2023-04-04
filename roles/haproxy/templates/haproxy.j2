@@ -77,7 +77,6 @@ frontend vmware_exporter
 
 backend vmware_exporter_servers
     balance roundrobin
-    option httpchk
     option forwardfor if-none
     {% for host in vmware_exporter_hosts %}
 server server{{ loop.index }} {{ host.ip }}:{{ host.port }}  check

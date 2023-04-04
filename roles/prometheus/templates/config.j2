@@ -26,15 +26,15 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ["127.0.0.1:{{ prometheus_port | default('9090') }}"]
+      - targets: ["127.0.0.1:{{ prometheus_port }}"]
   - job_name: 'pve'
     static_configs:
-      {% for proxmox in proxmox_hosts %}
+{% for proxmox in proxmox_hosts %}
       - targets:
         - {{ proxmox }}
         labels:
           hypervisor_type: "proxmox"
-      {% endfor %}
+{% endfor %}
     metrics_path: /pve
     params:
       module: [default]
@@ -44,76 +44,20 @@ scrape_configs:
       - source_labels: [__param_target]
         target_label: instance
       - target_label: __address__
-        replacement: {{ pve_exporter_host | default('127.0.0.1') }}:{{ pve_exporter_port | default('9221') }}  # PVE exporter.
+        replacement: {{ pve_exporter_host }}:{{ pve_exporter_port }}  # PVE exporter.
   - job_name: "node_exporter"
     static_configs:
       - targets:
-          {% for host in node_exporter_hosts %}
-          - {{ host }}
-          {% endfor %}
+{% for host in node_exporter_hosts %}
+        - {{ host.ip }}:{{ host.port }}
+{% endfor %}
 
   - job_name: 'vmware_esx'
     metrics_path: '/metrics'
     static_configs:
-    - targets: ["10.98.12.18:9272"]
+    - targets: 
+{% for vmware in vmware_hosts %}
+      - {{ vmware.ip }}:{{ vmware.port }}
+{% endfor %}
       labels:
         hypervisor_type: "vmware"
-    params:
-      section: [esx]
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: localhost:9272
-  - job_name: "python_app"
-    static_configs:
-    - targets: ["localhost:8001"]
-  - job_name: "grafana"
-    static_configs:
-    - targets: ["localhost:3000"]
-  - job_name: "blackbox_exporter"
-    static_configs:
-    - targets: ["localhost:9115"]
-  - job_name: "ilo"
-  # http://10.98.12.18:9416/metrics?ilo_host=10.98.11.1&ilo_port=443&ilo_user=juniper&ilo_password=juniper@123
-    static_configs:
-    - targets: 
-      - 10.98.11.10
-      - 10.98.11.11
-    metrics_path: /metrics
-    params:
-      ilo_port:
-      - 443
-      ilo_user:
-      - juniper
-      ilo_password:
-      - juniper@123
-    relabel_configs:
-    - source_labels: [__address__]
-      target_label: __param_ilo_host
-    - source_labels: [__address__]
-      target_label: instance
-    - target_label: __address__
-      replacement: 10.98.12.18:9416
-  - job_name: 'prometheus-website'
-    static_configs:
-    - targets:
-      - prometheus.io
-    metrics_path: /probe
-    params:
-      module:
-      - http_ipv4
-      target:
-      - facebook.com
-    relabel_configs:
-      - source_labels: [__address__]
-        target_label: __param_target
-      - source_labels: [__param_target]
-        target_label: instance
-      - target_label: __address__
-        replacement: localhost:9115  # The blackbox exporter's real hostname:port.
-  - job_name: "pushgateway"
-    static_configs:
-    - targets: ["localhost:9091"]

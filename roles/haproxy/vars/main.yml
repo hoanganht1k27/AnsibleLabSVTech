@@ -1,1 +1,7 @@
 ---
+prometheus_hosts:
+  - ip: 10.98.12.29
+    port: 9090
+grafana_hosts:
+  - ip: 10.98.12.29
+    port: 3000

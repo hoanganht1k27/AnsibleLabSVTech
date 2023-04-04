@@ -1,0 +1,2 @@
+---
+default_keepalived_config_path: /etc/keepalived/keepalived.conf
