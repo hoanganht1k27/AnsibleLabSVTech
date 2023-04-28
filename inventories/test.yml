@@ -1,0 +1,18 @@
+all:
+  hosts:
+    host-01:
+      ansible_host: 10.98.12.29
+  children:
+    haproxy_for_exporter_2:
+      hosts:
+        host-01:
+          username: hoanganh
+          haproxy_type:
+            - name: 'pve_exporter'
+            - age: 18
+    keepalived_for_exporter:
+      hosts:
+        host-01:
+          username: lkl
+          haproxy_type:
+            - name: 'vmware_exporter'

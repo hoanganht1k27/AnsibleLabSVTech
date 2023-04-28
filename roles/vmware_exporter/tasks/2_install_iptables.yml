@@ -1,0 +1,32 @@
+#hoanganht1k27
+---
+- name: IPTABLES [Step 01] - Stop Firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: IPTABLES [Step 02] - Install Iptables
+  yum:
+    name: ['iptables', 'iptables-services']
+    state: latest
+
+- name: IPTABLES [Step 03]-[Single] - Add vmware exporter port to config file
+  lineinfile:
+    dest: /etc/sysconfig/iptables
+    insertbefore: '-A INPUT -j REJECT --reject-with icmp-host-prohibited'
+    line: '{{ item }}'
+    state: present
+  with_items:
+    - "# VMWARE EXPORTER #"
+    - "-A INPUT -p tcp -m state --state NEW -m tcp --dport {{ vmware_exporter_port }} -m comment --comment \"Vmware exporter port\" -j ACCEPT"
+
+- name: IPTABLES [Step 04] - Add node exporter port to Firewall
+  iptables:
+    action: "insert"
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ vmware_exporter_port | int}}"
+    ctstate: NEW
+    comment: "Vmware exporter port"
+    jump: ACCEPT

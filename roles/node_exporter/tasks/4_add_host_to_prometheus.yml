@@ -1,0 +1,21 @@
+    - name: NODE EXPORTER [Step 01] - Write host to list
+      lineinfile:
+        path: "{{ node_exporter_list_file_path }}"
+        line: "{{ ansible_host }}"
+        create: true
+        state: present
+      delegate_to: localhost
+    - name: NODE EXPORTER [Step 02] - Read list file content
+      set_fact:
+        file_contents: "{{ lookup('file', node_exporter_list_file_path).splitlines() }}"
+      delegate_to: localhost
+    - name: NODE EXPORTER [Step 03] - Debug
+      debug:
+        var: file_contents
+    - name: NODE EXPORTER [Step 04] - Write content to prometheus
+      lineinfile:
+        insertafter: "- targets:"
+        line: "  - {{ item }}:{{ node_exporter_port }}"
+        path: "{{ node_exporter_config_file_path }}"
+      loop: "{{ file_contents }}"
+      when: is_prometheus is defined

@@ -1,0 +1,4 @@
+---
+- name: KVM_EXPORTER [Step 01] - Check target is kvm hypervisor or not
+  shell: grep -q "PNETLab" /etc/issue
+

@@ -29,7 +29,7 @@ scrape_configs:
       - targets: ["127.0.0.1:{{ prometheus_port }}"]
   - job_name: 'pve'
     static_configs:
-{% for proxmox in proxmox_hosts %}
+{% for pve in pve_hosts %}
       - targets:
         - {{ proxmox }}
         labels:

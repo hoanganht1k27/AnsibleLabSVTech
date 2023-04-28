@@ -1,0 +1,30 @@
+#hoanganht1k27
+---
+- name: PVE_EXPORTER_CONFIG [Step 0] - Install docker
+  include_role:
+    name: docker
+- name: PVE_EXPORTER_CONFIG [Step 1] - Copy config file
+  copy:
+    src: pve.yml
+    dest: "{{ pve_exporter_config_path }}"
+  register: pve_conf
+- name: PVE_EXPORTER_CONFIG [Step 2] - Check docker container is running or not
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ pve_exporter_port }}"
+    state: started
+    delay: 0
+    timeout: 3
+  ignore_errors: true
+  register: pve_container
+- name: PVE_EXPORTER_CONFIG [Step 3] - Stop old docker container
+  command: docker stop {{ container_name }}
+  ignore_errors: true
+  when: pve_conf.changed or pve_container.failed
+- name: PVE_EXPORTER_CONFIG [Step 4] - Remove old docker container
+  command: docker remove {{ container_name }}
+  ignore_errors: true
+  when: pve_conf.changed or pve_container.failed
+#- name: Debug
+#  debug:
+#    var: ansible_kernel_version

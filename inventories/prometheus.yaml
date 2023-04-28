@@ -1,0 +1,115 @@
+all:
+  hosts:
+    host-01:
+      ansible_host: 10.98.12.29
+    host-02:
+      ansible_host: 10.98.12.223
+    host-03:
+      ansible_host: 10.98.0.12
+    host-04:
+      ansible_host: 10.98.12.40
+    host-05:
+      ansible_host: 10.98.0.11
+    host-06:
+      ansible_host: 10.98.12.18
+  children:
+    node_exporter:
+      hosts:
+        host-01:
+        host-02:
+        host-06:
+          is_prometheus: 1
+      vars:
+        ansible_user: juniper
+        ansible_become: true
+        ansible_become_method: sudo
+        ansible_become_password: juniper@123
+        node_exporter_install_path: /opt/node_exporter
+        node_exporter_version: 1.5.0
+        node_exporter_local_installation: 1
+        node_exporter_config_file_path: /root/prometheus-2.37.5.linux-amd64/file_sd.yml
+        node_exporter_list_file_path: /tmp/list_node_exporter
+        node_exporter_username: prometheus
+        node_exporter_password: juniper@123
+    kvm_exporter:
+      hosts:
+        host-03:
+          gather_facts: false
+        host-01:
+      vars:
+        ansible_user: juniper
+        ansible_become: true
+        ansible_become_method: sudo
+        ansible_become_password: juniper@123
+    proxmox:
+      hosts:
+        host-04:
+        host-05:
+        host-06:
+          is_prometheus: 1
+      vars:
+        ansible_user: root
+        pve_monitor_group: monitor
+        pve_monitor_user: prometheus2
+        pve_monitor_user_password: juniper@123
+        pve_exporter_config_file_path: /root/prometheus-2.37.5.linux-amd64/file_pve.yml
+        pve_exporter_list_file_path: /tmp/list_proxmox
+    pve_exporter:
+      hosts:
+        host-01:
+      vars:
+        ansible_user: juniper
+        ansible_become: true
+        ansible_become_method: sudo
+        ansible_become_password: juniper@123
+        pve_exporter_config_path: /opt/pve.yml
+        container_name: prometheus_pve_exporter
+    vmware_exporter:
+      hosts:
+      vars:
+        ansible_user: root
+        ansible_become: true
+        ansible_become_method: sudo
+        ansible_become_password: juniper@123
+        vmware_exporter_config_path: /opt/esx.yml
+        container_name: prometheus_vmware_exporter
+    haproxy_for_exporter:
+      hosts:
+        host-02:
+          for_pve_exporter: 1
+          for_vmware_exporter: 1
+      vars:
+        haproxy_config_path: /etc/haproxy/haproxy.cfg
+        haproxy_log_file: /var/log/haproxy.log
+    prometheus_group:
+      hosts:
+        host-06:
+          prometheus_pve_exporter_config_path: /root/prometheus-2.37.5.linux-amd64/file_pve.yml
+          prometheus_node_exporter_config_path: /root/prometheus-2.37.5.linux-amd64/file_sd.yml
+          prometheus_config_path: /opt/prometheus.yml
+      vars:
+        #pve_exporter_host: 10.98.12.29
+        #pve_hosts:
+        #  - 10.98.0.11
+        #  - 10.98.0.1
+        #vmware_hosts:
+        #  - ip: 10.98.12.29
+        #    port: 9272
+        #node_exporter_hosts:
+        #  - ip: 10.98.12.29
+        #    port: 9100
+        pve_file_path_to_delete: /tmp/delete_proxmox
+        node_exporter_file_path_to_delete: /tmp/delete_node_exporter
+    keepalived_for_exporter:
+      hosts:
+        host-02: 
+          name: anhnguyen2
+    prometheus:
+      hosts:
+  vars:
+    node_exporter_port: 9100
+    pve_exporter_port: 9221
+    vmware_exporter_port: 9272
+    haproxy_pve_exporter_port: 8080
+    haproxy_vmware_exporter_port: 8081
+    prometheus_port: 9090

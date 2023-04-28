@@ -1,3 +1,4 @@
 ---
-- include: setup_vmware_exporter.yml
-- include: install_vmware_exporter.yml
+- include: 1_copy_configuration_file.yml
+#- include: 2_install_iptables.yml
+#- include: 3_run_vmware_exporter.yml

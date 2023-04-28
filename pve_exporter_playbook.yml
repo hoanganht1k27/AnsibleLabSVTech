@@ -3,9 +3,5 @@
   tasks:
     - include_role:
         name: docker
-    - name: Install iptables package
-      yum:
-        name: iptables
-        state: present
     - include_role:
         name: pve_exporter

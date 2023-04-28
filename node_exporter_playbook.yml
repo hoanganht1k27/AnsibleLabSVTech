@@ -1,9 +1,50 @@
 - hosts: node_exporter
-  remote_user: root
+  become: true
+  become_user: root
+  vars:
+    node_exporter_specific_path: "{{ node_exporter_install_path }}/node_exporter-{{ node_exporter_version }}"
+    node_exporter_installation_file_path: "{{ node_exporter_install_path }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+    node_exporter_installation_filename: "node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+    node_exporter_download_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+  roles:
+    #- role: node_exporter
+
+- hosts: kvm_exporter
+  become: true
+  become_user: root
+  gather_facts: false
+  roles:
+    #- role: kvm_exporter
+    #  vars:
+    #     memcheck_period: 180
+
+- hosts: proxmox
+  gather_facts: false
+  roles:
+    #- role: proxmox
+
+- hosts: prometheus_group
+  gather_facts: false
   tasks:
-    - name: Install iptables package
-      yum:
-        name: iptables
-        state: present
-    - include_role:
-        name: node_exporter
+    - name: Read pve list file to delete
+      set_fact:
+        file_contents: "{{ lookup('file', pve_file_path_to_delete).splitlines() }}"
+      delegate_to: localhost
+    - name: Delete host in prometheus config for pve exporter
+      lineinfile:
+        state: absent
+        regexp: "{{ item }}"
+        path: "{{ prometheus_pve_exporter_config_path }}"
+      loop: "{{ file_contents }}"
+
+
+    - name: Read node_exporter list file to delete
+      set_fact:
+        file_contents: "{{ lookup('file', node_exporter_file_path_to_delete).splitlines() }}"
+      delegate_to: localhost
+    - name: Delete host in prometheus config for node exporter
+      lineinfile:
+        state: absent
+        regexp: "{{ item }}"
+        path: "{{ prometheus_node_exporter_config_path }}"
+      loop: "{{ file_contents }}"

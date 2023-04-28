@@ -1,0 +1,11 @@
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: Merge haproxy_type variables
+      set_fact:
+        haproxy_type: "{{ haproxy_type | default({}) | combine(hostvars[item]['haproxy_type'] | default({}), recursive=true) }}"
+      loop: "{{ groups['haproxy_for_exporter_2'] + groups['keepalived_for_exporter'] }}"
+      run_once: true
+    - name: Debug
+      debug:
+        var: haproxy_type

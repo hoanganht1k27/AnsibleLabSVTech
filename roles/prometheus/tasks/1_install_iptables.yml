@@ -1,0 +1,33 @@
+# hoanganht1k27
+---
+- name: IPTABLES [Step 01] - Stop Firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: IPTABLES [Step 02] - Install Iptables
+  yum:
+    name: ['iptables', 'iptables-services']
+    state: latest
+
+- name: IPTABLES [Step 03]-[Single] - Add prometheus port to config file
+  lineinfile:
+    dest: /etc/sysconfig/iptables
+    insertbefore: '-A INPUT -j REJECT --reject-with icmp-host-prohibited'
+    line: '{{ item }}'
+    state: present
+  with_items:
+    - "# PROMETHEUS EXPORTER #"
+    - "-A INPUT -p tcp -m state --state NEW -m tcp --dport {{ prometheus_port }} -m comment --comment \"Prometheus port\" -j ACCEPT"
+#  notify:
+#    - Restart Iptables
+- name: IPTABLES [Step 04] - Add prometheus port to Firewall
+  iptables:
+    action: "insert"
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ prometheus_port | int}}"
+    ctstate: NEW
+    comment: "Prometheus port"
+    jump: ACCEPT

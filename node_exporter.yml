@@ -1,0 +1,10 @@
+- hosts: node_exporter
+  become: true
+  become_user: root
+  vars:
+    node_exporter_specific_path: "{{ node_exporter_install_path }}/node_exporter-{{ node_exporter_version }}"
+    node_exporter_installation_file_path: "{{ node_exporter_install_path }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+    node_exporter_installation_filename: "node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+    node_exporter_download_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+  roles:
+    - role: node_exporter

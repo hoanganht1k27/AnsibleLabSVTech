@@ -1,0 +1,57 @@
+# hoanganht1k27
+---
+- name: NODE EXPORTER - Create user
+  user:
+    name: "{{ node_exporter_username }}"
+    password: "{{ node_exporter_password | password_hash('sha512') }}"
+    state: present
+    createhome: no
+    shell: /bin/bash
+- name: DOWNLOAD FILE [Step 1] - Create install folder if needed
+  file:
+    path: "{{ node_exporter_install_path }}"
+    state: directory
+- name: DOWNLOAD FILE [Step 1] - Check folder existed
+  stat:
+    path: "{{ node_exporter_specific_path }}"
+  register: folder_exists
+
+#- name: DOWNLOAD FILE [Step 2] - Delete all old files
+#  file:
+#    path: "{{ node_exporter_install_path }}/*"
+#    state: absent
+#  when: not folder_exists.stat.exists
+
+- name: DOWNLOAD FILE [Step 3] - Download installation file from internet
+  get_url:
+    url: "{{ nod_exporter_download_url }}"
+    dest: "{{ node_exporter_installation_file_path }}"
+  when: (not folder_exists.stat.exists) and node_exporter_local_installation == 0
+  register: reload_service
+
+- name: DOWNLOAD FILE [Step 4] - Get local installation file
+  copy:
+    src: "{{ node_exporter_installation_filename }}"
+    dest: "{{ node_exporter_installation_file_path }}"
+    mode: "0664"
+  when: (not folder_exists.stat.exists) and node_exporter_local_installation == 1
+
+- name: DOWNLOAD FILE [Step 5] - Extract installation file
+  command:
+    cmd: "{{ item }}"
+  with_items:
+    - "mkdir -p {{ node_exporter_specific_path }}"
+    - "tar -xvf {{ node_exporter_installation_file_path }} -C {{ node_exporter_specific_path }} --strip-components=1"
+  when: not folder_exists.stat.exists
+
+- name: DEBUG
+  debug:
+    var: ansible_user
+
+- name: DOWNLOAD FILE [Step 6] - Change owner of installation file
+  file:
+    path: "{{ node_exporter_specific_path }}"
+    owner: "{{ node_exporter_username }}"
+    group: "{{ node_exporter_username }}"
+    state: directory
+    recurse: yes

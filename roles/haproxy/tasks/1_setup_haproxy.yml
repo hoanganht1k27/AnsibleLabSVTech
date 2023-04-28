@@ -1,0 +1,29 @@
+- name: Debug1
+  debug:
+    var: username
+
+- name: Haproxy [Step 01] - Install HAProxy package
+  yum: 
+    name: haproxy
+    state: latest
+
+- name: Haproxy [Step 02] - Install rsyslog
+  yum:
+    name: rsyslog
+    state: present
+
+- name: Haproxy [Step 03] - Add config to rsyslog
+  lineinfile:
+    line: "{{ item }}"
+    insertafter: "#### RULES ####"
+    path: /etc/rsyslog.conf
+  with_items:
+    - "local2 {{ haproxy_log_file }}"
+  notify: Restart Rsyslog
+
+- name: Haproxy [Step 04] - Copy config file to remote host
+  template:
+    src: haproxy.j2
+    dest: "{{ haproxy_config_path }}"
+  register: service_conf
+  notify: Restart Haproxy

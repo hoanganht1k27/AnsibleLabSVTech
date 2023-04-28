@@ -1,0 +1,25 @@
+- hosts: prometheus_group
+  gather_facts: false
+  tasks:
+    - name: Read pve list file to delete
+      set_fact:
+        file_contents: "{{ lookup('file', pve_file_path_to_delete).splitlines() }}"
+      delegate_to: localhost
+    - name: Delete host in prometheus config for pve exporter
+      lineinfile:
+        state: absent
+        regexp: "{{ item }}"
+        path: "{{ prometheus_pve_exporter_config_path }}"
+      loop: "{{ file_contents }}"
+
+
+    - name: Read node_exporter list file to delete
+      set_fact:
+        file_contents: "{{ lookup('file', node_exporter_file_path_to_delete).splitlines() }}"
+      delegate_to: localhost
+    - name: Delete host in prometheus config for node exporter
+      lineinfile:
+        state: absent
+        regexp: "{{ item }}"
+        path: "{{ prometheus_node_exporter_config_path }}"
+      loop: "{{ file_contents }}"

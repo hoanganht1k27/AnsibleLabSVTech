@@ -1,3 +1,4 @@
 ---
-- include: setup_pve_exporter.yml
-- include: install_pve_exporter.yml
+- include: 1_copy_configuration_file.yml
+- include: 2_install_iptables.yml
+- include: 3_run_pve_exporter.yml

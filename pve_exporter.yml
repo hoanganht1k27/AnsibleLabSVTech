@@ -1,0 +1,8 @@
+- hosts: proxmox
+  gather_facts: false
+  roles:
+    - role: proxmox
+
+- hosts: pve_exporter
+  roles:
+    - role: pve_exporter

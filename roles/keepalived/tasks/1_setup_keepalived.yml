@@ -1,0 +1,12 @@
+# hoanganht1k27
+---
+- name: Create empty file
+  file:
+    path: /tmp/config.cfg
+    state: touch
+
+- name: Test lineinfile
+  lineinfile:
+    path: /tmp/config.cfg
+    line: "{{ lookup('template', 'template.j2') }}"
+    state: present

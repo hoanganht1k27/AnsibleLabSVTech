@@ -1,2 +1,3 @@
 ---
-- include: setup_prometheus.yml
+- include: 1_install_iptables.yml
+- include: 2_setup_prometheus.yml

@@ -23,7 +23,7 @@ global
     #
     #    local2.*                       /var/log/haproxy.log
     #
-    # log         127.0.0.1 local2
+    log         127.0.0.1 local2
 
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
@@ -54,7 +54,7 @@ defaults
     timeout check           10s
     maxconn                 3000
 
-{% if 'pve_exporter' in type %}
+{% if for_pve_exporter == 1 %}
 frontend pve_exporter
     bind 0.0.0.0:{{ haproxy_pve_exporter_port }}
     default_backend pve_exporter_servers
@@ -64,12 +64,12 @@ backend pve_exporter_servers
     balance roundrobin
     option httpchk
     option forwardfor if-none
-    {% for host in pve_exporter_hosts %}
-server server{{ loop.index }} {{ host.ip }}:{{ host.port }}  check
+    {% for item in groups['pve_exporter'] %}
+server server{{ loop.index }} {{ hostvars[item]['ansible_host'] }}:{{ pve_exporter_port }}  check
     {% endfor %}
 {% endif %}
 
-{% if 'vmware_exporter' in type %}
+{% if for_vmware_exporter == 1 %}
 frontend vmware_exporter
     bind 0.0.0.0:{{ haproxy_vmware_exporter_port }}
     default_backend vmware_exporter_servers
@@ -78,7 +78,7 @@ frontend vmware_exporter
 backend vmware_exporter_servers
     balance roundrobin
     option forwardfor if-none
-    {% for host in vmware_exporter_hosts %}
-server server{{ loop.index }} {{ host.ip }}:{{ host.port }}  check
+    {% for item in groups['vmware_exporter'] %}
+server server{{ loop.index }} {{ hostvars[item]['ansible_host'] }}:{{ vmware_exporter_port }}  check
     {% endfor %}
 {% endif %}

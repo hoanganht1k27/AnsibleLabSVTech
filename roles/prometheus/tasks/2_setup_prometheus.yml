@@ -1,0 +1,25 @@
+- name: Copy config file to remote host
+  template:
+    src: config.j2
+    dest: "{{ prometheus_config_path }}"
+  register: prometheus_conf
+- name: Check docker container is running or not
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ prometheus_port }}"
+    state: started
+    delay: 0
+    timeout: 3
+  ignore_errors: yes
+  register: prometheus_container
+- name: Stop old docker container
+  command: docker stop {{ container_name }}
+  ignore_errors: true
+  when: prometheus_conf.changed or prometheus_container.failed
+- name: Remove old docker container
+  command: docker remove {{ container_name }}
+  ignore_errors: true
+  when: prometheus_conf.changed or prometheus_container.failed
+- name: Run prometheus
+  command: "docker run --name {{ container_name }} --rm -d -p {{ prometheus_port }}:9090 -v {{ prometheus_config_path }}:/etc/prometheus/prometheus.yml prom/prometheus"
+  when: prometheus_conf.changed or prometheus_container.failed

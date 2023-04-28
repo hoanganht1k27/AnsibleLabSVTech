@@ -1,0 +1,30 @@
+#- name: VMWARE_EXPORTER [Step 0] - Install docker
+#  include_role:
+#    name: docker
+#- name: VMWARE_EXPORTER [Step 1] - Copy config file
+#  copy:
+#    src: esx.yml
+#    dest: "{{ vmware_exporter_config_path }}"
+#  register: vmware_conf
+#- name: VMWARE_EXPORTER [Step 2] - Check docker container is running or not
+#  wait_for:
+#    host: "{{ ansible_host }}"
+#    port: "{{ vmware_exporter_port }}"
+#    state: started
+#    delay: 0
+#    timeout: 3
+#  ignore_errors: yes
+#  register: vmware_container
+- name: Debug
+  local_action:
+    module: copy
+    content: "{{ ansible_facts }}"
+    dest: /root/debug2.txt
+#- name: VMWARE_EXPORTER [Step 3] - Stop old docker container
+#  command: docker stop {{ container_name }}
+#  ignore_errors: true
+#  when: vmware_conf.changed or vmware_container.failed
+#- name: VMWARE_EXPORTER [Step 4] - Remove old docker container
+#  command: docker remove {{ container_name }}
+#  ignore_errors: true
+#  when: vmware_conf.changed or vmware_container.failed

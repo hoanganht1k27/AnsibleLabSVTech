@@ -1,3 +1,4 @@
 ---
-- include: setup_haproxy.yml
-- include: install_haproxy.yml
+- include: 1_setup_haproxy.yml
+- include: 2_install_iptables.yml
+- include: 3_start_haproxy.yml

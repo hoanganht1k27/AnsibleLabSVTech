@@ -1,0 +1,6 @@
+# hoanganht1k27
+---
+- name: Start haproxy
+  service:
+    name: haproxy
+    state: started

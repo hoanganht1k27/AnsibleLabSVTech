@@ -1,2 +1,5 @@
 ---
-- include: install_docker.yml
+- include: install_docker_redhat.yml
+  when: ansible_os_family == 'RedHat'
+- include: install_docker_debian.yml
+  when: ansible_os_family == 'Debian'
